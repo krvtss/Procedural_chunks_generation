@@ -9,4 +9,4 @@ The map is split into a localized grid. As the player moves, `Map.cs` calculates
 **Noise & Biomes**
 The procedural math is handled in `NoiseGenerator.cs`, which generates the Perlin noise arrays for height, moisture, and heat. The map script evaluates these combined float values per-tile against `BiomePreset` ScriptableObjects to determine the terrain layout. The `BiomePreset` stores the rules for foliage, entities, and ores, which get their independent noise passes. Any runtime modifications to the tiles are saved when the chunk unloads.
 
-![World Walk](0401 (2)(1).gif)
+![World Walk](0401(2)(1).gif)
