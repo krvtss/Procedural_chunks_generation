@@ -1,7 +1,7 @@
 # Procedural_chunks_generation
 Wrote this a couple years back for a 2D Unity project. Open-sourcing it to show my implementation of chunk streaming and noise-based biomes.
 
-![World Gen Demo](your_gif_name.gif)
+![World Gen Demo](0401-_2_.gif)
 
 **Chunk Streaming**
 The map is split into a localized grid. As the player moves, `Map.cs` calculates spatial distance, destroying out-of-bounds chunks to free memory and pushing new coordinates to a load queue. A Coroutine processes this queue incrementally to distribute the instantiation load and prevent main thread spikes. Loaded chunks are tracked using a `HashSet<Vector3Int>` to ensure O(1) lookups and avoid unnecessary allocation overhead.
