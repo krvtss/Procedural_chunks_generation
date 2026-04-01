@@ -1,24 +1,11 @@
 # Procedural_chunks_generation
 
-**Project Archive Notice:** This system was built several years ago for a personal 2D game. It is provided here to demonstrate a foundational approach to chunk streaming, noise layering, and performance optimization in Unity.
+Wrote this a couple years back for a 2D Unity project. Open-sourcing it to show my implementation of chunk streaming and noise-based biomes.
 
-![World Generation Streaming](0401-_2_.gif)
+![World Gen Demo](0401-_2_.gif)
 
-## Core Features
-* **Biome Generation:** Layers multiple Perlin noise maps (Height, Moisture, Heat) to calculate biomes and structures.
-* **Gradual Streaming:** Uses a time-sliced Coroutine queue to load chunks asynchronously, spreading hardware load to maintain frame rate.
-* **Spatial Tracking:** Utilizes `HashSet` collections for O(1) lookups to track loaded areas and minimize garbage collection.
-* **Persistent Data:** World rules and entities are driven by `ScriptableObjects`. Map modifications are saved at runtime as chunks unload.
+**Chunk Streaming & Memory**
+The map is split into a localized grid. As the player moves, `Map.cs` calculates spatial distance, destroying out-of-bounds chunks to free memory and pushing new coordinates to a load queue. A Coroutine processes this queue incrementally to distribute the instantiation load and prevent main thread spikes. Loaded chunk coordinates are tracked using a `HashSet<Vector3Int>` to ensure O(1) lookups and avoid unnecessary memory allocation overhead.
 
-## Technical Overview
-
-### Chunk Management
-The world is divided into a localized grid. As the player moves, the `Map.cs` manager calculates spatial distance. Out-of-bounds chunks are destroyed to free memory. New coordinates are pushed into a queue and processed sequentially across multiple frames, preventing main thread lockups during tile placement.
-
-### Noise Logic
-The generator evaluates multiple data points per tile:
-1. **Height Map:** Determines base terrain boundaries (Water, Sand, Ground, Walls).
-2. **Moisture & Heat Maps:** Blended with height data to define the specific `BiomePreset`.
-3. **Foliage & Ore Maps:** Independent noise layers governing resource density based on the active biome's parameters.
-* `Scripts/NoiseGenerator.cs` - Handles the Perlin noise math and array generation.
-* `Scripts/ScriptableObjects/` - Contains the data containers for Biome Presets, Loot Tables, and Items.
+**Noise and Biome Logic**
+Biomes are calculated by cross-referencing multiple Perlin noise maps (Height, Moisture, Heat). The terrain type is evaluated per-tile by checking the combined float values against `BiomePreset` ScriptableObjects. Additional independent noise layers dictate the density of foliage, entities, and ores based on the active biome's parameters. Any runtime modifications to the tiles are saved when the chunk unloads.
